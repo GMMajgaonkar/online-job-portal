@@ -8,6 +8,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSingleJob } from "@/redux/jobSlice";
 import { toast } from "sonner";
 
+function userHasApplied(applications, userId) {
+  if (!applications?.length || !userId) return false;
+  const uid = String(userId);
+  return applications.some((entry) => {
+    const aid = entry?.applicant;
+    if (aid == null) return false;
+    if (typeof aid === "object" && aid._id != null) return String(aid._id) === uid;
+    return String(aid) === uid;
+  });
+}
+
 const Description = () => {
   const params = useParams();
   const jobId = params.id;
@@ -18,11 +29,9 @@ const Description = () => {
   const [error, setError] = useState(null);
   const { user } = useSelector((store) => store.auth);
 
-  const isIntiallyApplied =
-    singleJob?.application?.some(
-      (application) => application.applicant === user?._id
-    ) || false;
-  const [isApplied, setIsApplied] = useState(isIntiallyApplied);
+  const [isApplied, setIsApplied] = useState(() =>
+    userHasApplied(singleJob?.applications, user?._id)
+  );
 
   const applyJobHandler = async () => {
     try {
@@ -32,9 +41,12 @@ const Description = () => {
       );
       if (res.data.success) {
         setIsApplied(true);
+        const newEntry = res.data.applicationId
+          ? { _id: res.data.applicationId, applicant: user?._id }
+          : { applicant: user?._id };
         const updateSingleJob = {
           ...singleJob,
-          applications: [...singleJob.applications, { applicant: user?._id }],
+          applications: [...(singleJob.applications || []), newEntry],
         };
         dispatch(setSingleJob(updateSingleJob));
         console.log(res.data);
@@ -58,9 +70,7 @@ const Description = () => {
         if (res.data.status) {
           dispatch(setSingleJob(res.data.job));
           setIsApplied(
-            res.data.job.applications.some(
-              (application) => application.applicant === user?._id
-            )
+            userHasApplied(res.data.job.applications, user?._id)
           );
         } else {
           setError("Failed to fetch jobs.");
@@ -75,6 +85,11 @@ const Description = () => {
 
     fetchSingleJobs();
   }, [jobId, dispatch, user?._id]);
+
+  useEffect(() => {
+    setIsApplied(userHasApplied(singleJob?.applications, user?._id));
+  }, [singleJob?._id, singleJob?.applications, user?._id]);
+
   console.log("single jobs", singleJob);
 
   if (!singleJob) {

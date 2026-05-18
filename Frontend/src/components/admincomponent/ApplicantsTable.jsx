@@ -10,7 +10,8 @@ import {
 } from "../ui/table";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { MoreHorizontal } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updateApplicantStatus } from "@/redux/applicationSlice";
 import { toast } from "sonner";
 import axios from "axios";
 import { APPLICATION_API_ENDPOINT } from "@/utils/data";
@@ -18,22 +19,27 @@ import { APPLICATION_API_ENDPOINT } from "@/utils/data";
 const shortlistingStatus = ["Accepted", "Rejected"];
 
 const ApplicantsTable = () => {
+  const dispatch = useDispatch();
   const { applicants } = useSelector((store) => store.application);
 
   const statusHandler = async (status, id) => {
-    console.log("called");
     try {
-      axios.defaults.withCredentials = true;
       const res = await axios.post(
         `${APPLICATION_API_ENDPOINT}/status/${id}/update`,
-        { status }
+        { status: status.toLowerCase() },
+        { withCredentials: true }
       );
-      console.log(res);
       if (res.data.success) {
+        dispatch(
+          updateApplicantStatus({
+            applicationId: id,
+            status: status.toLowerCase(),
+          })
+        );
         toast.success(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message ?? "Update failed");
     }
   };
 
@@ -80,20 +86,28 @@ const ApplicantsTable = () => {
                       <MoreHorizontal />
                     </PopoverTrigger>
                     <PopoverContent className="w-32">
-                       {shortlistingStatus.map((status, index) => {
+                       {shortlistingStatus.map((statusOption) => {
+                          const current = (item?.status || "pending").toLowerCase();
+                          const isChecked =
+                            current === statusOption.toLowerCase();
                           return (
-                            <div
-                              onClick={() => statusHandler(status, item?._id)}
-                              key={index}
-                              className="flex w-fit items-center my-2 cursor-pointer"
+                            <label
+                              key={statusOption}
+                              className="flex w-fit items-center my-2 cursor-pointer gap-2"
+                              onClick={() => {
+                                if (!isChecked)
+                                  statusHandler(statusOption, item._id);
+                              }}
                             >
                               <input
                                 type="radio"
-                                name="shortlistingStatus"
-                                value={status}
-                              />{" "}
-                              {status}
-                            </div>
+                                name={`shortlisting-${item._id}`}
+                                value={statusOption}
+                                checked={isChecked}
+                                readOnly
+                              />
+                              {statusOption}
+                            </label>
                           );
                         })}
                       </PopoverContent>

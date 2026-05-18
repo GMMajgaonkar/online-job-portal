@@ -1,8 +1,7 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import getDataUri from "../utils/datauri.js";
-import cloudinary from "../utils/cloud.js";
+import { getPublicUploadUrl } from "../utils/fileUrl.js";
 
 export const register = async (req, res) => {
   try {
@@ -39,6 +38,14 @@ export const register = async (req, res) => {
       });
     }
 
+    const existingPhone = await User.findOne({ phoneNumber });
+    if (existingPhone) {
+      return res.status(400).json({
+        message: "Phone number already exists",
+        success: false,
+      });
+    }
+
     const file = req.file;
     if (!file) {
       return res.status(400).json({
@@ -47,8 +54,7 @@ export const register = async (req, res) => {
       });
     }
 
-    const fileUri = getDataUri(file);
-    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+    const profilePhotoUrl = getPublicUploadUrl(`profiles/${file.filename}`);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -61,7 +67,7 @@ export const register = async (req, res) => {
       password: hashedPassword,
       role,
       profile: {
-        profilePhoto: cloudResponse.secure_url,
+        profilePhoto: profilePhotoUrl,
       },
     });
 
@@ -73,6 +79,13 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern || {})[0] || "value";
+      return res.status(400).json({
+        message: `This ${field} is already registered`,
+        success: false,
+      });
+    }
     res.status(500).json({
       message: "Server Error registering user",
       success: false,
@@ -115,7 +128,7 @@ export const login = async (req, res) => {
     }
 
     const tokenData = {
-      userId: user._id,
+      userId: String(user._id),
     };
     const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
       expiresIn: "1d",
@@ -190,9 +203,7 @@ export const updateProfile = async (req, res) => {
     if (skills) user.profile.skills = skills.split(",");
 
     if (file) {
-      const fileUri = getDataUri(file);
-      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-      user.profile.resume = cloudResponse.secure_url;
+      user.profile.resume = getPublicUploadUrl(`resumes/${file.filename}`);
       user.profile.resumeOriginalName = file.originalname;
     }
 

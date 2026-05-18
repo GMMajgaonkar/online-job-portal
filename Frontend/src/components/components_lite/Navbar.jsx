@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios"; // Import axios
 import { setUser } from "@/redux/authSlice";
+import { setAllAppliedJobs } from "@/redux/jobSlice";
 import { USER_API_ENDPOINT } from "@/utils/data";
 
 const Navbar = () => {
@@ -21,6 +22,7 @@ const Navbar = () => {
       });
       if (res && res.data && res.data.success) {
         dispatch(setUser(null));
+        dispatch(setAllAppliedJobs([]));
         navigate("/");
         toast.success(res.data.message);
       } else {

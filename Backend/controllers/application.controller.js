@@ -35,9 +35,11 @@ export const applyJob = async (req, res) => {
     job.applications.push(newApplication._id);
     await job.save();
 
-    return res
-      .status(201)
-      .json({ message: "Application submitted", success: true });
+    return res.status(201).json({
+      message: "Application submitted",
+      success: true,
+      applicationId: newApplication._id,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error", success: false });
@@ -47,20 +49,19 @@ export const applyJob = async (req, res) => {
 export const getAppliedJobs = async (req, res) => {
   try {
     const userId = req.id;
-    const application = await Application.find({ applicant: userId })
+    const applications = await Application.find({
+      applicant: userId,
+    })
       .sort({ createdAt: -1 })
       .populate({
         path: "job",
-        options: { sort: { createdAt: -1 } },
-        populate: { path: "company", options: { sort: { createdAt: -1 } } },
+        populate: { path: "company" },
       });
-    if (!application) {
-      return res
-        .status(404)
-        .json({ message: "No applications found", success: false });
-    }
 
-    return res.status(200).json({ application, success: true });
+    return res.status(200).json({
+      application: applications,
+      success: true,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error", success: false });

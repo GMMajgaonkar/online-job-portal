@@ -9,6 +9,7 @@ import companyReducer from "./companyslice";
 import {
   persistStore,
   persistReducer,
+  createTransform,
   FLUSH,
   REHYDRATE,
   PAUSE,
@@ -18,10 +19,25 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import applicationSlice from "./applicationSlice";
+
+/** Avoid stale empty persisted lists; always refetch applied jobs / job detail from API */
+const jobVolatileTransform = createTransform(
+  (inboundState) =>
+    inboundState
+      ? { ...inboundState, allAppliedJobs: [], singleJob: null }
+      : inboundState,
+  (outboundState) =>
+    outboundState
+      ? { ...outboundState, allAppliedJobs: [], singleJob: null }
+      : outboundState,
+  { whitelist: ["job", "jobs"] }
+);
+
 const persistConfig = {
   key: "root",
   version: 1,
   storage,
+  transforms: [jobVolatileTransform],
 };
 
 const rootReducer = combineReducers({

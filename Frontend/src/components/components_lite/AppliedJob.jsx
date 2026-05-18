@@ -12,7 +12,8 @@ import { Badge } from "../ui/badge";
 import { useSelector } from "react-redux";
 
 const AppliedJob = () => {
-  const { allAppliedJobs } = useSelector((store) => store.job);
+  const { allAppliedJobs = [] } = useSelector((store) => store.job);
+  const rows = Array.isArray(allAppliedJobs) ? allAppliedJobs : [];
   return (
     <div>
       <Table>
@@ -26,14 +27,20 @@ const AppliedJob = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {allAppliedJobs.length <= 0 ? (
+          {rows.length <= 0 ? (
             <span>You have not applied any job yet. </span>
           ) : (
-            allAppliedJobs.map((appliedJob) => (
+            rows.map((appliedJob) => (
               <TableRow key={appliedJob._id}>
-                <TableCell>{appliedJob?.createdAt.split("T")[0]}</TableCell>
-                <TableCell>{appliedJob.job?.title}</TableCell>
-                <TableCell>{appliedJob.job?.company.name}</TableCell>
+                <TableCell>
+                  {appliedJob?.createdAt
+                    ? appliedJob.createdAt.split("T")[0]
+                    : "—"}
+                </TableCell>
+                <TableCell>
+                  {appliedJob.job?.title ?? "Job unavailable"}
+                </TableCell>
+                <TableCell>{appliedJob.job?.company?.name ?? "—"}</TableCell>
                 <TableCell className="text-right">
                   <Badge
                     className={`${
