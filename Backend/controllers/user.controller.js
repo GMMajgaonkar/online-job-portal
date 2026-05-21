@@ -145,12 +145,17 @@ export const login = async (req, res) => {
       profile: user.profile,
     };
 
+    const isCrossOrigin =
+      process.env.FRONTEND_URL &&
+      process.env.FRONTEND_URL.startsWith("https");
+
     return res
       .status(200)
       .cookie("token", token, {
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: "Strict",
+        sameSite: isCrossOrigin ? "none" : "strict",
+        secure: isCrossOrigin,
       })
       .json({
         message: `Welcome back ${user.fullname}`,

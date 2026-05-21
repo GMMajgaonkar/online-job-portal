@@ -1,0 +1,19 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "Documentation structured like a standard **Java & Spring Boot** academic project report, adapted for this **MERN** job portal.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@mohtasham/md-to-docx": "^2.11.2",
+    "html-to-docx": "^1.8.0",
+    "marked": "^18.0.4",
+    "md-to-pdf": "^5.2.5"
+  }
+}

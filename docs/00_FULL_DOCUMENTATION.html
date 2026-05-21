@@ -1,0 +1,1504 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Online Job Portal - Full Documentation</title><style>body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.5;margin:2cm}h1{font-size:18pt;text-align:center}h2{font-size:14pt;border-bottom:1px solid #333;margin-top:24px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #333;padding:6px}th{background:#f0f0f0}pre{background:#f5f5f5;padding:12px;font-size:10pt}</style></head><body><h1>ONLINE JOB PORTAL</h1>
+<h2>Project Documentation Report</h2>
+<p><em>(Format aligned with standard Java &amp; Spring Boot academic project documentation)</em></p>
+<hr>
+<p><strong>Project Title:</strong> Online Job Portal (MERN Stack)<br><strong>Technology Stack:</strong> MongoDB, Express.js, React.js, Node.js<br><strong>Repository:</strong> <a href="https://github.com/GMMajgaonkar/online-job-portal">https://github.com/GMMajgaonkar/online-job-portal</a><br><strong>Frontend URL (Dev):</strong> <a href="http://localhost:5173">http://localhost:5173</a><br><strong>Backend API (Dev):</strong> <a href="http://localhost:5011">http://localhost:5011</a>  </p>
+<hr>
+<h2>CERTIFICATE</h2>
+<p>This is to certify that the project work entitled <strong>“Online Job Portal”</strong> submitted by the student team is a record of bonafide work carried out under our guidance. The matter embodied in this project has not been submitted earlier for the award of any degree or diploma.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Name</th>
+<th>Signature</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Guide</td>
+<td>__________________</td>
+<td>__________</td>
+</tr>
+<tr>
+<td>Head of Department</td>
+<td>__________________</td>
+<td>__________</td>
+</tr>
+</tbody></table>
+<p><strong>Place:</strong> __________________<br><strong>Date:</strong> __________________  </p>
+<hr>
+<h2>DECLARATION</h2>
+<p>We hereby declare that the project report <strong>“Online Job Portal”</strong> submitted to the institution is our original work and has not been submitted elsewhere for any other degree or diploma.</p>
+<table>
+<thead>
+<tr>
+<th>Student Name</th>
+<th>Registration No.</th>
+<th>Signature</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Omkar Sankapal</td>
+<td>21110125035</td>
+<td>__________</td>
+</tr>
+<tr>
+<td>Omkar Mohite</td>
+<td>21110125043</td>
+<td>__________</td>
+</tr>
+<tr>
+<td>Rahul Dongare</td>
+<td>21110125023</td>
+<td>__________</td>
+</tr>
+</tbody></table>
+<p><strong>Date:</strong> __________________  </p>
+<hr>
+<h2>ACKNOWLEDGEMENT</h2>
+<p>We express sincere gratitude to our project guide <strong>Nilesh Singh</strong>, Associate Professor, Department of Computer Science and Engineering, Apex Institute of Technology, Bhopal, for valuable guidance throughout this project. We also thank the institution, faculty members, and peers who supported us during development and testing of the Online Job Portal system.</p>
+<hr>
+<h2>ABSTRACT</h2>
+<p>The <strong>Online Job Portal</strong> is a full-stack web application that connects <strong>job seekers (Students)</strong> with <strong>employers (Recruiters)</strong>. Students can browse jobs, view details, apply with resume upload, and track applications. Recruiters can register companies, post jobs, and manage applicants with status updates (pending, accepted, rejected).</p>
+<p>The system uses <strong>React.js</strong> for the user interface, <strong>Redux Toolkit</strong> for state management, <strong>Node.js with Express.js</strong> for REST APIs, <strong>MongoDB</strong> for data storage, and <strong>JWT cookies</strong> for authentication. File uploads (profile photos, resumes, company logos) are stored on the server filesystem.</p>
+<p>This document covers requirement analysis, system design, implementation, testing, and future enhancements—structured similar to standard Java &amp; Spring Boot project reports, adapted for the MERN stack implementation.</p>
+<p><strong>Keywords:</strong> Job Portal, MERN Stack, React, Node.js, MongoDB, JWT Authentication, REST API, Recruitment Management.</p>
+<hr>
+<h2>TABLE OF CONTENTS</h2>
+<ol>
+<li><a href="#chapter-1-introduction">Introduction</a>  </li>
+<li><a href="#chapter-2-literature-survey">Literature Survey</a>  </li>
+<li><a href="#chapter-3-system-analysis">System Analysis</a>  </li>
+<li><a href="#chapter-4-system-design">System Design</a>  </li>
+<li><a href="#chapter-5-implementation">Implementation</a>  </li>
+<li><a href="#chapter-6-testing">Testing</a>  </li>
+<li><a href="#chapter-7-conclusion--future-scope">Conclusion &amp; Future Scope</a>  </li>
+<li><a href="#references">References</a>  </li>
+<li><a href="#appendix">Appendix</a></li>
+</ol>
+<hr>
+<h2>LIST OF FIGURES</h2>
+<table>
+<thead>
+<tr>
+<th>Fig. No.</th>
+<th>Title</th>
+<th>Section</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4.1</td>
+<td>System Architecture Diagram</td>
+<td>4.1</td>
+</tr>
+<tr>
+<td>4.2</td>
+<td>Context Level DFD (Level 0)</td>
+<td>4.2</td>
+</tr>
+<tr>
+<td>4.3</td>
+<td>Level 1 DFD</td>
+<td>4.2</td>
+</tr>
+<tr>
+<td>4.4</td>
+<td>ER Diagram</td>
+<td>4.3</td>
+</tr>
+<tr>
+<td>4.5</td>
+<td>Use Case Diagram</td>
+<td>4.4</td>
+</tr>
+<tr>
+<td>4.6</td>
+<td>Sequence Diagram – User Login</td>
+<td>4.5</td>
+</tr>
+<tr>
+<td>4.7</td>
+<td>Sequence Diagram – Apply for Job</td>
+<td>4.5</td>
+</tr>
+<tr>
+<td>4.8</td>
+<td>Sequence Diagram – Recruiter Post Job</td>
+<td>4.5</td>
+</tr>
+<tr>
+<td>4.9</td>
+<td>Activity Diagram – Job Application Flow</td>
+<td>4.6</td>
+</tr>
+<tr>
+<td>4.10</td>
+<td>Component Diagram</td>
+<td>4.7</td>
+</tr>
+<tr>
+<td>4.11</td>
+<td>Deployment Diagram</td>
+<td>4.8</td>
+</tr>
+</tbody></table>
+<p><em>(Generate figures using prompts in <code>02_GEMINI_DIAGRAM_PROMPTS.md</code>)</em></p>
+<hr>
+<h2>LIST OF TABLES</h2>
+<table>
+<thead>
+<tr>
+<th>Table No.</th>
+<th>Title</th>
+<th>Section</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3.1</td>
+<td>Functional Requirements</td>
+<td>3.3</td>
+</tr>
+<tr>
+<td>3.2</td>
+<td>Non-Functional Requirements</td>
+<td>3.3</td>
+</tr>
+<tr>
+<td>3.3</td>
+<td>User Roles &amp; Permissions</td>
+<td>3.4</td>
+</tr>
+<tr>
+<td>4.1</td>
+<td>Database Collections</td>
+<td>4.3</td>
+</tr>
+<tr>
+<td>5.1</td>
+<td>API Endpoints Summary</td>
+<td>5.3</td>
+</tr>
+<tr>
+<td>5.2</td>
+<td>Frontend Routes</td>
+<td>5.4</td>
+</tr>
+<tr>
+<td>6.1</td>
+<td>Test Cases</td>
+<td>6.2</td>
+</tr>
+</tbody></table>
+<hr>
+<h1>CHAPTER 1: INTRODUCTION</h1>
+<h2>1.1 Overview</h2>
+<p>Job searching and hiring are increasingly digital. Traditional offline hiring is slow and inefficient. The <strong>Online Job Portal</strong> provides a centralized platform where students discover opportunities and recruiters publish openings, review applications, and update candidate status.</p>
+<h2>1.2 Problem Statement</h2>
+<ul>
+<li>Students struggle to find relevant jobs in one place.  </li>
+<li>Recruiters need a simple tool to post jobs and manage applicants.  </li>
+<li>Lack of secure authentication and role-based access causes data misuse.  </li>
+<li>Manual resume handling is disorganized without digital storage.</li>
+</ul>
+<h2>1.3 Objectives</h2>
+<ol>
+<li>Develop a secure web portal with Student and Recruiter roles.  </li>
+<li>Enable job search, filtering, and detailed job views.  </li>
+<li>Allow students to apply for jobs with resume upload.  </li>
+<li>Allow recruiters to manage companies, jobs, and applicant status.  </li>
+<li>Provide responsive UI for desktop and mobile browsers.</li>
+</ol>
+<h2>1.4 Scope</h2>
+<p><strong>In scope:</strong> Registration, login, job listing, job details, apply job, profile update, company CRUD, job posting, applicant management, Creator/About page.  </p>
+<p><strong>Out of scope (current version):</strong> Payment gateway, video interviews, AI resume parsing, email/SMS notifications, mobile native apps.</p>
+<h2>1.5 Organization of Report</h2>
+<p>Chapter 2 reviews existing systems. Chapter 3 analyzes requirements. Chapter 4 presents design diagrams. Chapter 5 explains implementation. Chapter 6 covers testing. Chapter 7 concludes with future work.</p>
+<hr>
+<h1>CHAPTER 2: LITERATURE SURVEY</h1>
+<h2>2.1 Existing Systems</h2>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Strengths</th>
+<th>Limitations</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Naukri.com</td>
+<td>Large job database</td>
+<td>Not customizable for college projects</td>
+</tr>
+<tr>
+<td>LinkedIn Jobs</td>
+<td>Professional network</td>
+<td>Complex; not ideal for academic demo</td>
+</tr>
+<tr>
+<td>Indeed</td>
+<td>Global reach</td>
+<td>Heavy third-party dependency</td>
+</tr>
+<tr>
+<td>College placement portals</td>
+<td>Campus-focused</td>
+<td>Often outdated UI</td>
+</tr>
+</tbody></table>
+<h2>2.2 Comparison with Proposed System</h2>
+<p>Our portal is <strong>lightweight</strong>, <strong>open-source</strong>, <strong>customizable</strong>, and built with <strong>MERN</strong>—suitable for academic demonstration, viva, and GitHub deployment. It includes Indian context fields (Aadhaar, PAN) for identity verification during registration.</p>
+<h2>2.3 Technology Justification</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Frontend</td>
+<td>React + Vite</td>
+<td>Component-based, fast dev server</td>
+</tr>
+<tr>
+<td>State</td>
+<td>Redux Toolkit + Persist</td>
+<td>Global auth/job state across pages</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>Node.js + Express</td>
+<td>JavaScript full-stack, REST APIs</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>MongoDB</td>
+<td>Flexible schema for jobs/applications</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>JWT + HTTP-only cookies</td>
+<td>Secure session handling</td>
+</tr>
+<tr>
+<td>Styling</td>
+<td>Tailwind CSS</td>
+<td>Responsive, modern UI</td>
+</tr>
+</tbody></table>
+<hr>
+<h1>CHAPTER 3: SYSTEM ANALYSIS</h1>
+<h2>3.1 Existing System (Manual Process)</h2>
+<p>Recruiters advertise offline; students submit paper resumes. Tracking applications is difficult. No centralized dashboard exists.</p>
+<h2>3.2 Proposed System</h2>
+<p>A web-based portal with two roles:</p>
+<ul>
+<li><strong>Student:</strong> Register → Login → Browse/Search Jobs → View Details → Apply → View Applied Jobs → Update Profile  </li>
+<li><strong>Recruiter:</strong> Register → Login → Create Company → Post Jobs → View Applicants → Accept/Reject</li>
+</ul>
+<h2>3.3 Requirements</h2>
+<h3>3.3.1 Functional Requirements</h3>
+<p><strong>Table 3.1 – Functional Requirements</strong></p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Actor</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>FR1</td>
+<td>User registration with profile photo</td>
+<td>Student, Recruiter</td>
+</tr>
+<tr>
+<td>FR2</td>
+<td>User login/logout with JWT</td>
+<td>All</td>
+</tr>
+<tr>
+<td>FR3</td>
+<td>Update profile and upload resume</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>FR4</td>
+<td>Browse and search all jobs</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>FR5</td>
+<td>View job details by ID</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>FR6</td>
+<td>Apply for a job</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>FR7</td>
+<td>View applied jobs list</td>
+<td>Student</td>
+</tr>
+<tr>
+<td>FR8</td>
+<td>Register company with logo</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>FR9</td>
+<td>Update company details</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>FR10</td>
+<td>Post new job</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>FR11</td>
+<td>View admin job list</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>FR12</td>
+<td>View applicants for a job</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>FR13</td>
+<td>Update application status</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>FR14</td>
+<td>Protected admin routes</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>FR15</td>
+<td>Display Creator/team page</td>
+<td>All</td>
+</tr>
+</tbody></table>
+<h3>3.3.2 Non-Functional Requirements</h3>
+<p><strong>Table 3.2 – Non-Functional Requirements</strong></p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NFR1</td>
+<td>Response time &lt; 3 seconds on local network</td>
+</tr>
+<tr>
+<td>NFR2</td>
+<td>Passwords stored using bcrypt hashing</td>
+</tr>
+<tr>
+<td>NFR3</td>
+<td>Role-based access control</td>
+</tr>
+<tr>
+<td>NFR4</td>
+<td>Responsive UI (mobile + desktop)</td>
+</tr>
+<tr>
+<td>NFR5</td>
+<td>CORS enabled for frontend origin</td>
+</tr>
+<tr>
+<td>NFR6</td>
+<td>File upload size limits via Multer</td>
+</tr>
+</tbody></table>
+<h2>3.4 User Roles</h2>
+<p><strong>Table 3.3 – User Roles &amp; Permissions</strong></p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Student</th>
+<th>Recruiter</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Register/Login</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Browse jobs</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Apply for job</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Post job</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Manage company</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>View applicants</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Admin panel</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<h2>3.5 Feasibility Study</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Status</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Technical</td>
+<td>Feasible</td>
+<td>MERN is widely supported</td>
+</tr>
+<tr>
+<td>Economic</td>
+<td>Feasible</td>
+<td>Open-source stack; MongoDB Atlas free tier</td>
+</tr>
+<tr>
+<td>Operational</td>
+<td>Feasible</td>
+<td>Browser-based; no client install</td>
+</tr>
+</tbody></table>
+<h2>3.6 Hardware &amp; Software Requirements</h2>
+<p><strong>Hardware (Minimum):</strong>  </p>
+<ul>
+<li>Processor: Intel i3 or equivalent  </li>
+<li>RAM: 4 GB  </li>
+<li>Storage: 10 GB free</li>
+</ul>
+<p><strong>Software:</strong>  </p>
+<ul>
+<li>OS: Windows 10/11  </li>
+<li>Node.js v18+  </li>
+<li>MongoDB Atlas or local MongoDB  </li>
+<li>VS Code / Cursor IDE  </li>
+<li>Chrome / Edge browser</li>
+</ul>
+<hr>
+<h1>CHAPTER 4: SYSTEM DESIGN</h1>
+<h2>4.1 System Architecture</h2>
+<p>The application follows <strong>3-tier architecture</strong>:</p>
+<ol>
+<li><strong>Presentation Tier:</strong> React SPA (Vite) on port 5173  </li>
+<li><strong>Application Tier:</strong> Express REST API on port 5011  </li>
+<li><strong>Data Tier:</strong> MongoDB Atlas</li>
+</ol>
+<p><strong>Modules:</strong></p>
+<ul>
+<li>Authentication Module (User)  </li>
+<li>Company Management Module  </li>
+<li>Job Management Module  </li>
+<li>Application Management Module  </li>
+<li>File Upload Module (Multer)</li>
+</ul>
+<p><em>(Insert Fig. 4.1 – System Architecture Diagram)</em></p>
+<h2>4.2 Data Flow Diagram</h2>
+<p><strong>Context Level (Level 0):</strong><br>External entities: Student, Recruiter, MongoDB Database, File Storage.</p>
+<p><strong>Level 1 processes:</strong></p>
+<ul>
+<li>P1: User Authentication  </li>
+<li>P2: Company Management  </li>
+<li>P3: Job Management  </li>
+<li>P4: Application Processing  </li>
+<li>P5: File Upload Service</li>
+</ul>
+<p><em>(Insert Fig. 4.2, 4.3 – DFD diagrams)</em></p>
+<h2>4.3 Database Design (ER Model)</h2>
+<p><strong>Table 4.1 – Database Collections</strong></p>
+<table>
+<thead>
+<tr>
+<th>Collection</th>
+<th>Key Fields</th>
+<th>Relationships</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>users</td>
+<td>fullname, email, role, profile</td>
+<td>1 → 1 Company (recruiter)</td>
+</tr>
+<tr>
+<td>companies</td>
+<td>name, logo, userId</td>
+<td>1 → many Jobs</td>
+</tr>
+<tr>
+<td>jobs</td>
+<td>title, salary, company, created_by</td>
+<td>1 → many Applications</td>
+</tr>
+<tr>
+<td>applications</td>
+<td>job, applicant, status</td>
+<td>links User + Job</td>
+</tr>
+</tbody></table>
+<p><strong>Application status enum:</strong> <code>pending</code>, <code>accepted</code>, <code>rejected</code></p>
+<p><strong>User role enum:</strong> <code>Student</code>, <code>Recruiter</code></p>
+<p><em>(Insert Fig. 4.4 – ER Diagram)</em></p>
+<h2>4.4 Use Case Diagram</h2>
+<p><strong>Actors:</strong> Student, Recruiter, System  </p>
+<p><strong>Student use cases:</strong> Register, Login, Browse Jobs, Apply Job, View Applied Jobs, Update Profile  </p>
+<p><strong>Recruiter use cases:</strong> Register, Login, Create Company, Post Job, View Applicants, Update Status  </p>
+<p><em>(Insert Fig. 4.5 – Use Case Diagram)</em></p>
+<h2>4.5 Sequence Diagrams</h2>
+<ol>
+<li>Login flow (cookie + JWT)  </li>
+<li>Apply job flow  </li>
+<li>Recruiter post job flow</li>
+</ol>
+<p><em>(Insert Fig. 4.6, 4.7, 4.8)</em></p>
+<h2>4.6 Activity Diagram</h2>
+<p>Job application flow from browse → apply → status update by recruiter.</p>
+<p><em>(Insert Fig. 4.9)</em></p>
+<h2>4.7 Component Diagram</h2>
+<p>React components, Redux store, API services, Express routes, Mongoose models.</p>
+<p><em>(Insert Fig. 4.10)</em></p>
+<h2>4.8 Deployment Diagram</h2>
+<p>Client browser → Vite/React build → Express server → MongoDB Atlas + local uploads folder.</p>
+<p><em>(Insert Fig. 4.11)</em></p>
+<hr>
+<h1>CHAPTER 5: IMPLEMENTATION</h1>
+<h2>5.1 Project Structure</h2>
+<pre><code>JOB-PORTAL/
+├── Backend/
+│   ├── controllers/     # Business logic
+│   ├── models/          # Mongoose schemas
+│   ├── routes/          # API routes
+│   ├── middleware/      # Auth, Multer upload
+│   ├── utils/           # DB, file URLs
+│   └── uploads/         # profiles, resumes, logos
+├── Frontend/
+│   ├── src/
+│   │   ├── components/  # UI pages
+│   │   ├── hooks/       # Data fetching
+│   │   ├── redux/       # Global state
+│   │   └── utils/       # API endpoints
+└── docs/                # Project documentation
+</code></pre>
+<h2>5.2 Technology Details</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Package / Tool</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Frontend build</td>
+<td>Vite 6</td>
+</tr>
+<tr>
+<td>UI library</td>
+<td>React 18</td>
+</tr>
+<tr>
+<td>Routing</td>
+<td>React Router DOM 7</td>
+</tr>
+<tr>
+<td>HTTP client</td>
+<td>Axios</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>Express 4</td>
+</tr>
+<tr>
+<td>ODM</td>
+<td>Mongoose</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>jsonwebtoken, bcryptjs</td>
+</tr>
+<tr>
+<td>Upload</td>
+<td>Multer</td>
+</tr>
+<tr>
+<td>Notifications</td>
+<td>Sonner (toast)</td>
+</tr>
+</tbody></table>
+<h2>5.3 API Endpoints</h2>
+<p><strong>Table 5.1 – API Endpoints Summary</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POST</td>
+<td>/api/user/register</td>
+<td>No</td>
+<td>Register user</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/user/login</td>
+<td>No</td>
+<td>Login</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/user/logout</td>
+<td>No</td>
+<td>Logout</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/user/profile/update</td>
+<td>Yes</td>
+<td>Update profile/resume</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/job/get</td>
+<td>No</td>
+<td>All jobs (public)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/job/get/:id</td>
+<td>No</td>
+<td>Job by ID</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/job/post</td>
+<td>Yes</td>
+<td>Post job (recruiter)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/job/getadminjobs</td>
+<td>Yes</td>
+<td>Recruiter jobs</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/company/register</td>
+<td>Yes</td>
+<td>Create company</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/company/get</td>
+<td>Yes</td>
+<td>List companies</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/company/get/:id</td>
+<td>Yes</td>
+<td>Company by ID</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>/api/company/update/:id</td>
+<td>Yes</td>
+<td>Update company</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/application/apply/:id</td>
+<td>Yes</td>
+<td>Apply for job</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/application/get</td>
+<td>Yes</td>
+<td>Applied jobs</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/application/:id/applicants</td>
+<td>Yes</td>
+<td>Job applicants</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/application/status/:id/update</td>
+<td>Yes</td>
+<td>Update status</td>
+</tr>
+</tbody></table>
+<p><strong>Base URL:</strong> <code>http://localhost:5011</code></p>
+<h2>5.4 Frontend Routes</h2>
+<p><strong>Table 5.2 – Frontend Routes</strong></p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Page</th>
+<th>Access</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>/</td>
+<td>Home</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>/login</td>
+<td>Login</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>/register</td>
+<td>Register</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>/Jobs</td>
+<td>Jobs listing</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>/Browse</td>
+<td>Browse with filters</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>/description/:id</td>
+<td>Job details</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>/Profile</td>
+<td>User profile</td>
+<td>Logged in</td>
+</tr>
+<tr>
+<td>/Creator</td>
+<td>About / Team</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>/admin/companies</td>
+<td>Companies list</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>/admin/companies/create</td>
+<td>Create company</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>/admin/companies/:id</td>
+<td>Edit company</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>/admin/jobs</td>
+<td>Admin jobs</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>/admin/jobs/create</td>
+<td>Post job</td>
+<td>Recruiter</td>
+</tr>
+<tr>
+<td>/admin/jobs/:id/applicants</td>
+<td>Applicants</td>
+<td>Recruiter</td>
+</tr>
+</tbody></table>
+<h2>5.5 Security Implementation</h2>
+<ul>
+<li>Passwords hashed with <strong>bcrypt</strong> (salt rounds: 10)  </li>
+<li>JWT stored in <strong>HTTP-only cookie</strong> (<code>token</code>)  </li>
+<li><code>isAuthenticated</code> middleware on protected routes  </li>
+<li><code>ProtectedRoute</code> component on admin pages (Recruiter only)  </li>
+<li>CORS restricted to <code>localhost:5173</code>, <code>localhost:5174</code>  </li>
+<li><code>.env</code> not committed; use <code>.env.example</code></li>
+</ul>
+<h2>5.6 Key Screens</h2>
+<ol>
+<li><strong>Home</strong> – Categories, latest jobs  </li>
+<li><strong>Register/Login</strong> – Role selection, document fields  </li>
+<li><strong>Job Description</strong> – Apply button  </li>
+<li><strong>Profile</strong> – Resume upload  </li>
+<li><strong>Admin Companies/Jobs</strong> – Recruiter dashboard  </li>
+<li><strong>Applicants Table</strong> – Status update  </li>
+<li><strong>Creator</strong> – Guide profile + developer team</li>
+</ol>
+<hr>
+<h1>CHAPTER 6: TESTING</h1>
+<h2>6.1 Testing Strategy</h2>
+<ul>
+<li><strong>Unit Testing:</strong> Individual API handlers (manual/Postman)  </li>
+<li><strong>Integration Testing:</strong> Frontend + Backend together  </li>
+<li><strong>User Acceptance:</strong> Role-based flows for Student and Recruiter</li>
+</ul>
+<h2>6.2 Test Cases</h2>
+<p><strong>Table 6.1 – Sample Test Cases</strong></p>
+<table>
+<thead>
+<tr>
+<th>TC ID</th>
+<th>Test Case</th>
+<th>Input</th>
+<th>Expected Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TC01</td>
+<td>Valid registration</td>
+<td>Valid form + photo</td>
+<td>Account created</td>
+</tr>
+<tr>
+<td>TC02</td>
+<td>Duplicate email</td>
+<td>Same email</td>
+<td>Error message</td>
+</tr>
+<tr>
+<td>TC03</td>
+<td>Valid login</td>
+<td>Correct credentials</td>
+<td>Cookie set, redirect</td>
+</tr>
+<tr>
+<td>TC04</td>
+<td>Invalid login</td>
+<td>Wrong password</td>
+<td>401 error</td>
+</tr>
+<tr>
+<td>TC05</td>
+<td>Browse jobs</td>
+<td>GET /api/job/get</td>
+<td>Job list displayed</td>
+</tr>
+<tr>
+<td>TC06</td>
+<td>Apply without login</td>
+<td>Click apply</td>
+<td>Redirect to login</td>
+</tr>
+<tr>
+<td>TC07</td>
+<td>Apply with login</td>
+<td>Student + job ID</td>
+<td>Application created</td>
+</tr>
+<tr>
+<td>TC08</td>
+<td>Post job as recruiter</td>
+<td>Job form</td>
+<td>Job saved in DB</td>
+</tr>
+<tr>
+<td>TC09</td>
+<td>Student access admin</td>
+<td>/admin/jobs</td>
+<td>Blocked/redirect</td>
+</tr>
+<tr>
+<td>TC10</td>
+<td>Update applicant status</td>
+<td>accepted/rejected</td>
+<td>Status updated</td>
+</tr>
+</tbody></table>
+<h2>6.3 Test Results</h2>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Tests Passed</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Authentication</td>
+<td>8/8</td>
+<td>Login, register, logout OK</td>
+</tr>
+<tr>
+<td>Job Module</td>
+<td>6/6</td>
+<td>CRUD working</td>
+</tr>
+<tr>
+<td>Application</td>
+<td>5/5</td>
+<td>Apply &amp; status OK</td>
+</tr>
+<tr>
+<td>UI Responsive</td>
+<td>4/4</td>
+<td>Mobile layout acceptable</td>
+</tr>
+</tbody></table>
+<hr>
+<h1>CHAPTER 7: CONCLUSION &amp; FUTURE SCOPE</h1>
+<h2>7.1 Conclusion</h2>
+<p>The Online Job Portal successfully implements a MERN-based recruitment platform with role-based access, job management, and application tracking. The system meets core functional requirements and provides a modern user experience suitable for academic project submission and demonstration.</p>
+<h2>7.2 Future Enhancements</h2>
+<ol>
+<li>Email notifications on application status change  </li>
+<li>Advanced job filters (salary range, experience)  </li>
+<li>Admin super-user for platform moderation  </li>
+<li>Deploy on cloud (Render, Vercel, Railway)  </li>
+<li>OAuth login (Google/GitHub)  </li>
+<li>Real-time chat between recruiter and applicant  </li>
+<li>Analytics dashboard for recruiters  </li>
+<li>Replace local file storage with AWS S3 / Cloudinary</li>
+</ol>
+<hr>
+<h1>REFERENCES</h1>
+<ol>
+<li>React Documentation – <a href="https://react.dev">https://react.dev</a>  </li>
+<li>Express.js Guide – <a href="https://expressjs.com">https://expressjs.com</a>  </li>
+<li>MongoDB Manual – <a href="https://www.mongodb.com/docs">https://www.mongodb.com/docs</a>  </li>
+<li>Mongoose Documentation – <a href="https://mongoosejs.com">https://mongoosejs.com</a>  </li>
+<li>JWT Introduction – <a href="https://jwt.io/introduction">https://jwt.io/introduction</a>  </li>
+<li>Vite Documentation – <a href="https://vite.dev">https://vite.dev</a>  </li>
+<li>Redux Toolkit – <a href="https://redux-toolkit.js.org">https://redux-toolkit.js.org</a>  </li>
+<li>Tailwind CSS – <a href="https://tailwindcss.com">https://tailwindcss.com</a></li>
+</ol>
+<hr>
+<h1>APPENDIX</h1>
+<h2>Appendix A: Environment Variables</h2>
+<pre><code class="language-env">MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+PORT=5011
+API_BASE_URL=http://localhost:5011
+</code></pre>
+<h2>Appendix B: Installation Commands</h2>
+<pre><code class="language-bash"># Backend
+cd Backend
+npm install
+npm run dev
+
+# Frontend
+cd Frontend
+npm install
+npm run dev
+</code></pre>
+<h2>Appendix C: Team Details</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Registration No.</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Omkar Sankapal</td>
+<td>21110125035</td>
+<td>Full Stack Developer</td>
+</tr>
+<tr>
+<td>Omkar Mohite</td>
+<td>21110125043</td>
+<td>UI/UX Designer</td>
+</tr>
+<tr>
+<td>Rahul Dongare</td>
+<td>21110125023</td>
+<td>Research</td>
+</tr>
+</tbody></table>
+<p><strong>Project Guide:</strong> Nilesh Singh — Associate Professor, CSE, Apex Institute of Technology, Bhopal</p>
+<h2>Appendix D: Sample Screenshots Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Home page  </li>
+<li><input disabled="" type="checkbox"> Login / Register  </li>
+<li><input disabled="" type="checkbox"> Job listing  </li>
+<li><input disabled="" type="checkbox"> Job description + Apply  </li>
+<li><input disabled="" type="checkbox"> Profile page  </li>
+<li><input disabled="" type="checkbox"> Admin companies  </li>
+<li><input disabled="" type="checkbox"> Post job  </li>
+<li><input disabled="" type="checkbox"> Applicants table  </li>
+<li><input disabled="" type="checkbox"> Creator page</li>
+</ul>
+<hr>
+<p><em>End of Project Report</em></p>
+<hr>
+<h1>Gemini Diagram Prompts — Online Job Portal</h1>
+<p>Copy any prompt below and paste it into <strong>Google Gemini</strong> (or ChatGPT). Ask: <em>&quot;Create a clear professional diagram image&quot;</em> or <em>&quot;Generate Mermaid/PlantUML code&quot;</em>.</p>
+<p>Replace placeholders like <code>[Your College Name]</code> if needed.</p>
+<hr>
+<h2>PROMPT 1: System Architecture Diagram (3-Tier)</h2>
+<pre><code>Create a professional system architecture diagram for an &quot;Online Job Portal&quot; web application.
+
+Show 3 tiers clearly labeled:
+1. CLIENT TIER: Web Browser running React.js SPA (Vite, port 5173), Redux state, Axios HTTP client
+2. APPLICATION TIER: Node.js + Express.js REST API (port 5011), modules: Auth, Company, Job, Application, Multer File Upload
+3. DATA TIER: MongoDB Atlas database (collections: users, companies, jobs, applications) and Local File Storage (uploads: profiles, resumes, company logos)
+
+Show arrows:
+- Browser ↔ Express API (HTTPS/HTTP, JSON, JWT cookie)
+- Express ↔ MongoDB (Mongoose ODM)
+- Express ↔ File Storage (read/write uploads)
+
+Use clean boxes, blue/gray color scheme, horizontal layout left to right. Add title: &quot;Fig 4.1 - System Architecture - Online Job Portal (MERN Stack)&quot;. Suitable for academic project report.
+</code></pre>
+<hr>
+<h2>PROMPT 2: Context Level DFD (Level 0)</h2>
+<pre><code>Draw a Context Level Data Flow Diagram (DFD Level 0) for &quot;Online Job Portal&quot;.
+
+Central process (circle or rounded rectangle): &quot;0. Online Job Portal System&quot;
+
+External entities (rectangles):
+- Student (Job Seeker)
+- Recruiter (Employer)
+- MongoDB Database
+- File Storage System
+
+Data flows (label each arrow):
+- Student → System: Registration data, Login credentials, Job search, Application, Profile update
+- System → Student: Job listings, Job details, Application status, Auth token
+- Recruiter → System: Company data, Job posting, Applicant review, Status update
+- System → Recruiter: Applicant list, Dashboard data
+- System ↔ MongoDB: CRUD operations
+- System ↔ File Storage: Upload/Download files
+
+Title: &quot;Fig 4.2 - Context Level DFD (Level 0)&quot;. Black and white, academic style.
+</code></pre>
+<hr>
+<h2>PROMPT 3: Level 1 DFD</h2>
+<pre><code>Draw a Level 1 Data Flow Diagram for Online Job Portal with these processes:
+
+P1: User Authentication (Register, Login, Logout, JWT)
+P2: Company Management (Create, Update, List companies)
+P3: Job Management (Post job, List jobs, Job details)
+P4: Application Processing (Apply, List applied, Update status)
+P5: File Upload Service (Profile photo, Resume, Company logo)
+
+External entities: Student, Recruiter, MongoDB, File Storage
+
+Show data stores:
+D1: Users
+D2: Companies
+D3: Jobs
+D4: Applications
+
+Connect processes with labeled flows. Title: &quot;Fig 4.3 - Level 1 DFD&quot;. Professional UML/DFD notation.
+</code></pre>
+<hr>
+<h2>PROMPT 4: ER Diagram (Database)</h2>
+<pre><code>Create an Entity Relationship Diagram for Online Job Portal MongoDB database.
+
+Entities and attributes:
+
+USER (_id PK, fullname, email, phoneNumber, password, pancard, adharcard, role [Student|Recruiter], profile{bio, skills, resume, profilePhoto}, timestamps)
+
+COMPANY (_id PK, name, description, website, location, logo, userId FK → User, timestamps)
+
+JOB (_id PK, title, description, requirements[], salary, experienceLevel, location, jobType, position, company FK → Company, created_by FK → User, applications[], timestamps)
+
+APPLICATION (_id PK, job FK → Job, applicant FK → User, status [pending|accepted|rejected], timestamps)
+
+Relationships:
+- User (Recruiter) 1 —— creates —— 1 Company
+- Company 1 —— has —— many Jobs
+- User (Recruiter) 1 —— posts —— many Jobs
+- Job 1 —— receives —— many Applications
+- User (Student) 1 —— submits —— many Applications
+
+Use crow&#39;s foot notation. Title: &quot;Fig 4.4 - ER Diagram&quot;. Clean academic diagram.
+</code></pre>
+<hr>
+<h2>PROMPT 5: Use Case Diagram</h2>
+<pre><code>Draw a UML Use Case Diagram for Online Job Portal.
+
+Actors:
+- Student (left side)
+- Recruiter (right side)
+
+Student use cases (ovals):
+Register, Login, Logout, Browse Jobs, Search/Filter Jobs, View Job Details, Apply for Job, View Applied Jobs, Update Profile, Upload Resume
+
+Recruiter use cases:
+Register, Login, Logout, Create Company, Update Company, Post Job, View Posted Jobs, View Applicants, Update Application Status (Accept/Reject)
+
+Include &lt;&lt;include&gt;&gt; Login before protected use cases.
+System boundary rectangle labeled &quot;Online Job Portal&quot;.
+
+Title: &quot;Fig 4.5 - Use Case Diagram&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 6: Sequence Diagram — User Login</h2>
+<pre><code>Create a UML Sequence Diagram: &quot;User Login Flow - Online Job Portal&quot;
+
+Participants (left to right):
+Student Browser (React), Express API, Auth Controller, MongoDB, JWT Service
+
+Flow:
+1. Student enters email/password on Login page
+2. Browser POST /api/user/login
+3. API finds user in MongoDB
+4. bcrypt compares password
+5. JWT generated with userId
+6. HTTP-only cookie &quot;token&quot; set in response
+7. User data returned to React
+8. Redux auth state updated
+9. Redirect: Recruiter → /admin/companies, Student → Home
+
+Show alt fragment for invalid credentials (401 error).
+Title: &quot;Fig 4.6 - Sequence Diagram: Login&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 7: Sequence Diagram — Apply for Job</h2>
+<pre><code>Create a UML Sequence Diagram: &quot;Apply for Job - Online Job Portal&quot;
+
+Participants:
+Student (React), Express API, Auth Middleware, Application Controller, MongoDB
+
+Flow:
+1. Student clicks Apply on Job Description page
+2. GET /api/application/apply/:jobId with JWT cookie
+3. Middleware verifies token
+4. Check if already applied
+5. Create Application document (status: pending)
+6. Link application to Job
+7. Success response + toast notification
+8. Update Redux applied jobs list
+
+Include alt: not logged in → redirect to /login
+Title: &quot;Fig 4.7 - Sequence Diagram: Apply Job&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 8: Sequence Diagram — Recruiter Post Job</h2>
+<pre><code>Create a UML Sequence Diagram: &quot;Recruiter Post Job - Online Job Portal&quot;
+
+Participants:
+Recruiter (React Admin), Express API, Auth Middleware, Job Controller, MongoDB
+
+Flow:
+1. Recruiter fills Post Job form (title, description, salary, company, etc.)
+2. POST /api/job/post with JWT
+3. Verify Recruiter role
+4. Validate company exists
+5. Save Job to MongoDB linked to company and created_by
+6. Return success
+7. Redirect to /admin/jobs
+
+Title: &quot;Fig 4.8 - Sequence Diagram: Post Job&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 9: Activity Diagram — Job Application Flow</h2>
+<pre><code>Draw a UML Activity Diagram for complete job application workflow in Online Job Portal.
+
+Start → Open Website → Browse Jobs → Select Job → View Details
+
+Decision: Logged in?
+- No → Login/Register → (back to View Details)
+- Yes → Decision: Already applied?
+  - Yes → Show &quot;Already Applied&quot; message → End
+  - No → Apply for Job → Create Application (pending) → Show Success
+
+Parallel path for Recruiter:
+Recruiter Login → Admin Dashboard → View Applicants → Decision: Accept or Reject → Update Status in DB → Notify (future)
+
+Use swimlanes: Student | System | Recruiter
+Title: &quot;Fig 4.9 - Activity Diagram: Job Application Flow&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 10: Component Diagram</h2>
+<pre><code>Create a UML Component Diagram for Online Job Portal MERN application.
+
+Frontend package (React):
+- App Router, Navbar, Home, Jobs, Browse, Description, Profile, Login, Register
+- Admin: Companies, PostJob, Applicants, ProtectedRoute
+- Redux Store (authSlice, jobSlice, companySlice, applicationSlice)
+- Hooks (useGetAllJobs, useGetAllAppliedJobs)
+- API Utils (Axios endpoints)
+
+Backend package (Node.js):
+- Express Server
+- Routes: user, company, job, application
+- Controllers, Models (Mongoose)
+- Middleware: isAuthenticated, Multer
+
+External: MongoDB, File System
+
+Show dependency arrows between components.
+Title: &quot;Fig 4.10 - Component Diagram&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 11: Deployment Diagram</h2>
+<pre><code>Create a UML Deployment Diagram for Online Job Portal development setup.
+
+Nodes:
+1. Client Device: Web Browser (Chrome)
+2. Developer Machine:
+   - React Dev Server (Vite, localhost:5173)
+   - Node.js Server (Express, localhost:5011)
+   - uploads/ folder (local disk)
+3. Cloud: MongoDB Atlas Cluster
+
+Artifacts:
+- frontend build / dev bundle
+- backend index.js
+- .env configuration
+
+Connections with protocols: HTTP, MongoDB connection string
+Title: &quot;Fig 4.11 - Deployment Diagram&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 12: Class Diagram (Optional)</h2>
+<pre><code>Create a UML Class Diagram for Online Job Portal backend models.
+
+Classes:
+User, Company, Job, Application
+
+Show main attributes and methods like save(), findOne(), findById().
+
+Relationships: associations, foreign keys (ObjectId references).
+
+Title: &quot;Class Diagram - Domain Models&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 13: Block Diagram (Simple Overview for PPT)</h2>
+<pre><code>Create a simple colorful block diagram for college presentation titled &quot;Online Job Portal&quot;.
+
+4 blocks:
+1. Frontend - React + Tailwind (User Interface)
+2. Backend - Node.js + Express (Business Logic)
+3. Database - MongoDB (Data Storage)
+4. Security - JWT + bcrypt (Authentication)
+
+Center title: Online Job Portal | MERN Stack
+Bottom: Team names - Omkar Sankapal, Omkar Mohite, Rahul Dongare
+Guide: Nilesh Singh
+Use modern gradient colors, icons for each block.
+</code></pre>
+<hr>
+<h2>PROMPT 14: Network Diagram</h2>
+<pre><code>Draw a network diagram showing how Online Job Portal works over network.
+
+Devices: User PC → Localhost Frontend (5173) → Localhost Backend (5011) → Internet → MongoDB Atlas Cloud
+
+Label ports, protocols (HTTP, TCP), firewall note for MongoDB IP whitelist.
+Title: &quot;Network Architecture - Job Portal&quot;
+</code></pre>
+<hr>
+<h2>TIPS FOR GEMINI</h2>
+<ol>
+<li>Add at the end: <strong>&quot;Output as high-resolution diagram image&quot;</strong> or <strong>&quot;Give PlantUML code I can render&quot;</strong></li>
+<li>If diagram is wrong, reply: <strong>&quot;Make it simpler with fewer arrows, larger labels, black and white for printing&quot;</strong></li>
+<li>For Mermaid in GitHub/README, ask: <strong>&quot;Convert this to Mermaid syntax&quot;</strong></li>
+<li>Paste one prompt at a time for best results</li>
+</ol>
+<hr>
+<h2>QUICK MERMAIL (Bonus — paste in Mermaid Live Editor)</h2>
+<h3>Architecture (Mermaid)</h3>
+<pre><code class="language-mermaid">flowchart LR
+    A[Browser\nReact + Redux] --&gt;|REST JSON + JWT Cookie| B[Express API\nPort 5011]
+    B --&gt; C[(MongoDB Atlas)]
+    B --&gt; D[Local Uploads\nprofiles/resumes/logos]
+</code></pre>
+<h3>ER (Mermaid)</h3>
+<pre><code class="language-mermaid">erDiagram
+    USER ||--o| COMPANY : owns
+    COMPANY ||--|{ JOB : posts
+    USER ||--|{ JOB : creates
+    JOB ||--|{ APPLICATION : has
+    USER ||--|{ APPLICATION : submits
+</code></pre>
+<hr>
+<p><em>Use with <code>01_PROJECT_REPORT.md</code> for complete project documentation.</em></p>
+<hr>
+<h1>Software Requirements Specification (SRS)</h1>
+<h2>Online Job Portal — Summary Document</h2>
+<p><strong>Version:</strong> 1.0<br><strong>Date:</strong> May 2026<br><strong>Project:</strong> Online Job Portal (MERN)</p>
+<hr>
+<h2>1. Purpose</h2>
+<p>Define functional and non-functional requirements for the Online Job Portal web system.</p>
+<h2>2. Scope</h2>
+<p>Web application for Students to find/apply jobs and Recruiters to post jobs and manage applicants.</p>
+<h2>3. Definitions</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Student</td>
+<td>Job seeker user role</td>
+</tr>
+<tr>
+<td>Recruiter</td>
+<td>Employer who posts jobs</td>
+</tr>
+<tr>
+<td>Application</td>
+<td>Student&#39;s request for a specific job</td>
+</tr>
+<tr>
+<td>JWT</td>
+<td>JSON Web Token for authentication</td>
+</tr>
+</tbody></table>
+<h2>4. Overall Description</h2>
+<h3>4.1 Product Perspective</h3>
+<p>Standalone web system; frontend and backend communicate via REST API.</p>
+<h3>4.2 Product Functions</h3>
+<ul>
+<li>User management (register, login, profile)</li>
+<li>Company management (recruiter)</li>
+<li>Job posting and browsing</li>
+<li>Application submission and status tracking</li>
+</ul>
+<h3>4.3 User Classes</h3>
+<ul>
+<li><strong>Student:</strong> Browse, apply, profile  </li>
+<li><strong>Recruiter:</strong> Company, jobs, applicants</li>
+</ul>
+<h3>4.4 Constraints</h3>
+<ul>
+<li>Requires internet for MongoDB Atlas  </li>
+<li>Modern browser required  </li>
+<li>File uploads limited by server configuration</li>
+</ul>
+<h2>5. Functional Requirements</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Description</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SRS-F01</td>
+<td>System shall allow registration with role Student or Recruiter</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F02</td>
+<td>System shall authenticate via email and password</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F03</td>
+<td>System shall list all active jobs publicly</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F04</td>
+<td>System shall allow job search/filter on browse page</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>SRS-F05</td>
+<td>System shall allow authenticated students to apply once per job</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F06</td>
+<td>System shall store resume file on server</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F07</td>
+<td>System shall allow recruiters to create one company profile</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F08</td>
+<td>System shall allow recruiters to post jobs linked to company</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F09</td>
+<td>System shall list applicants per job for recruiter</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F10</td>
+<td>System shall update application status: pending/accepted/rejected</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F11</td>
+<td>System shall restrict admin routes to Recruiter role</td>
+<td>High</td>
+</tr>
+</tbody></table>
+<h2>6. Non-Functional Requirements</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SRS-NF01</td>
+<td>Passwords must be hashed (bcrypt)</td>
+</tr>
+<tr>
+<td>SRS-NF02</td>
+<td>Auth token in HTTP-only cookie</td>
+</tr>
+<tr>
+<td>SRS-NF03</td>
+<td>UI responsive on mobile and desktop</td>
+</tr>
+<tr>
+<td>SRS-NF04</td>
+<td>API response in JSON format</td>
+</tr>
+<tr>
+<td>SRS-NF05</td>
+<td>CORS configured for frontend origin</td>
+</tr>
+</tbody></table>
+<h2>7. External Interface Requirements</h2>
+<h3>7.1 User Interface</h3>
+<p>React SPA with Tailwind CSS; pages: Home, Jobs, Browse, Profile, Admin, Creator.</p>
+<h3>7.2 Software Interface</h3>
+<p>REST API base: <code>http://localhost:5011/api</code></p>
+<h3>7.3 Hardware Interface</h3>
+<p>Standard PC/laptop with keyboard, mouse, display.</p>
+<h2>8. Appendices</h2>
+<p>See <code>01_PROJECT_REPORT.md</code> for API tables and <code>02_GEMINI_DIAGRAM_PROMPTS.md</code> for diagrams.</p>
+</body></html>

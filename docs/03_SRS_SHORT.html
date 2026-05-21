@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>03_SRS_SHORT</title>
+  <style>
+  body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; margin: 2cm; color: #111; }
+  h1 { font-size: 18pt; text-align: center; page-break-before: always; }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { font-size: 14pt; border-bottom: 1px solid #333; padding-bottom: 4px; margin-top: 24px; }
+  h3 { font-size: 12pt; margin-top: 16px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 11pt; }
+  th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; }
+  th { background: #f0f0f0; }
+  code { background: #f5f5f5; padding: 2px 4px; font-size: 10pt; }
+  pre { background: #f5f5f5; padding: 12px; overflow-x: auto; font-size: 10pt; }
+  hr { margin: 24px 0; }
+  blockquote { border-left: 4px solid #666; margin-left: 0; padding-left: 12px; color: #444; }
+</style>
+</head>
+<body>
+<h1>Software Requirements Specification (SRS)</h1>
+<h2>Online Job Portal — Summary Document</h2>
+<p><strong>Version:</strong> 1.0<br><strong>Date:</strong> May 2026<br><strong>Project:</strong> Online Job Portal (MERN)</p>
+<hr>
+<h2>1. Purpose</h2>
+<p>Define functional and non-functional requirements for the Online Job Portal web system.</p>
+<h2>2. Scope</h2>
+<p>Web application for Students to find/apply jobs and Recruiters to post jobs and manage applicants.</p>
+<h2>3. Definitions</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Student</td>
+<td>Job seeker user role</td>
+</tr>
+<tr>
+<td>Recruiter</td>
+<td>Employer who posts jobs</td>
+</tr>
+<tr>
+<td>Application</td>
+<td>Student&#39;s request for a specific job</td>
+</tr>
+<tr>
+<td>JWT</td>
+<td>JSON Web Token for authentication</td>
+</tr>
+</tbody></table>
+<h2>4. Overall Description</h2>
+<h3>4.1 Product Perspective</h3>
+<p>Standalone web system; frontend and backend communicate via REST API.</p>
+<h3>4.2 Product Functions</h3>
+<ul>
+<li>User management (register, login, profile)</li>
+<li>Company management (recruiter)</li>
+<li>Job posting and browsing</li>
+<li>Application submission and status tracking</li>
+</ul>
+<h3>4.3 User Classes</h3>
+<ul>
+<li><strong>Student:</strong> Browse, apply, profile  </li>
+<li><strong>Recruiter:</strong> Company, jobs, applicants</li>
+</ul>
+<h3>4.4 Constraints</h3>
+<ul>
+<li>Requires internet for MongoDB Atlas  </li>
+<li>Modern browser required  </li>
+<li>File uploads limited by server configuration</li>
+</ul>
+<h2>5. Functional Requirements</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Description</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SRS-F01</td>
+<td>System shall allow registration with role Student or Recruiter</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F02</td>
+<td>System shall authenticate via email and password</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F03</td>
+<td>System shall list all active jobs publicly</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F04</td>
+<td>System shall allow job search/filter on browse page</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>SRS-F05</td>
+<td>System shall allow authenticated students to apply once per job</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F06</td>
+<td>System shall store resume file on server</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F07</td>
+<td>System shall allow recruiters to create one company profile</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F08</td>
+<td>System shall allow recruiters to post jobs linked to company</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F09</td>
+<td>System shall list applicants per job for recruiter</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F10</td>
+<td>System shall update application status: pending/accepted/rejected</td>
+<td>High</td>
+</tr>
+<tr>
+<td>SRS-F11</td>
+<td>System shall restrict admin routes to Recruiter role</td>
+<td>High</td>
+</tr>
+</tbody></table>
+<h2>6. Non-Functional Requirements</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SRS-NF01</td>
+<td>Passwords must be hashed (bcrypt)</td>
+</tr>
+<tr>
+<td>SRS-NF02</td>
+<td>Auth token in HTTP-only cookie</td>
+</tr>
+<tr>
+<td>SRS-NF03</td>
+<td>UI responsive on mobile and desktop</td>
+</tr>
+<tr>
+<td>SRS-NF04</td>
+<td>API response in JSON format</td>
+</tr>
+<tr>
+<td>SRS-NF05</td>
+<td>CORS configured for frontend origin</td>
+</tr>
+</tbody></table>
+<h2>7. External Interface Requirements</h2>
+<h3>7.1 User Interface</h3>
+<p>React SPA with Tailwind CSS; pages: Home, Jobs, Browse, Profile, Admin, Creator.</p>
+<h3>7.2 Software Interface</h3>
+<p>REST API base: <code>http://localhost:5011/api</code></p>
+<h3>7.3 Hardware Interface</h3>
+<p>Standard PC/laptop with keyboard, mouse, display.</p>
+<h2>8. Appendices</h2>
+<p>See <code>01_PROJECT_REPORT.md</code> for API tables and <code>02_GEMINI_DIAGRAM_PROMPTS.md</code> for diagrams.</p>
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>02_GEMINI_DIAGRAM_PROMPTS</title>
+  <style>
+  body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; margin: 2cm; color: #111; }
+  h1 { font-size: 18pt; text-align: center; page-break-before: always; }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { font-size: 14pt; border-bottom: 1px solid #333; padding-bottom: 4px; margin-top: 24px; }
+  h3 { font-size: 12pt; margin-top: 16px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 11pt; }
+  th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; }
+  th { background: #f0f0f0; }
+  code { background: #f5f5f5; padding: 2px 4px; font-size: 10pt; }
+  pre { background: #f5f5f5; padding: 12px; overflow-x: auto; font-size: 10pt; }
+  hr { margin: 24px 0; }
+  blockquote { border-left: 4px solid #666; margin-left: 0; padding-left: 12px; color: #444; }
+</style>
+</head>
+<body>
+<h1>Gemini Diagram Prompts — Online Job Portal</h1>
+<p>Copy any prompt below and paste it into <strong>Google Gemini</strong> (or ChatGPT). Ask: <em>&quot;Create a clear professional diagram image&quot;</em> or <em>&quot;Generate Mermaid/PlantUML code&quot;</em>.</p>
+<p>Replace placeholders like <code>[Your College Name]</code> if needed.</p>
+<hr>
+<h2>PROMPT 1: System Architecture Diagram (3-Tier)</h2>
+<pre><code>Create a professional system architecture diagram for an &quot;Online Job Portal&quot; web application.
+
+Show 3 tiers clearly labeled:
+1. CLIENT TIER: Web Browser running React.js SPA (Vite, port 5173), Redux state, Axios HTTP client
+2. APPLICATION TIER: Node.js + Express.js REST API (port 5011), modules: Auth, Company, Job, Application, Multer File Upload
+3. DATA TIER: MongoDB Atlas database (collections: users, companies, jobs, applications) and Local File Storage (uploads: profiles, resumes, company logos)
+
+Show arrows:
+- Browser ↔ Express API (HTTPS/HTTP, JSON, JWT cookie)
+- Express ↔ MongoDB (Mongoose ODM)
+- Express ↔ File Storage (read/write uploads)
+
+Use clean boxes, blue/gray color scheme, horizontal layout left to right. Add title: &quot;Fig 4.1 - System Architecture - Online Job Portal (MERN Stack)&quot;. Suitable for academic project report.
+</code></pre>
+<hr>
+<h2>PROMPT 2: Context Level DFD (Level 0)</h2>
+<pre><code>Draw a Context Level Data Flow Diagram (DFD Level 0) for &quot;Online Job Portal&quot;.
+
+Central process (circle or rounded rectangle): &quot;0. Online Job Portal System&quot;
+
+External entities (rectangles):
+- Student (Job Seeker)
+- Recruiter (Employer)
+- MongoDB Database
+- File Storage System
+
+Data flows (label each arrow):
+- Student → System: Registration data, Login credentials, Job search, Application, Profile update
+- System → Student: Job listings, Job details, Application status, Auth token
+- Recruiter → System: Company data, Job posting, Applicant review, Status update
+- System → Recruiter: Applicant list, Dashboard data
+- System ↔ MongoDB: CRUD operations
+- System ↔ File Storage: Upload/Download files
+
+Title: &quot;Fig 4.2 - Context Level DFD (Level 0)&quot;. Black and white, academic style.
+</code></pre>
+<hr>
+<h2>PROMPT 3: Level 1 DFD</h2>
+<pre><code>Draw a Level 1 Data Flow Diagram for Online Job Portal with these processes:
+
+P1: User Authentication (Register, Login, Logout, JWT)
+P2: Company Management (Create, Update, List companies)
+P3: Job Management (Post job, List jobs, Job details)
+P4: Application Processing (Apply, List applied, Update status)
+P5: File Upload Service (Profile photo, Resume, Company logo)
+
+External entities: Student, Recruiter, MongoDB, File Storage
+
+Show data stores:
+D1: Users
+D2: Companies
+D3: Jobs
+D4: Applications
+
+Connect processes with labeled flows. Title: &quot;Fig 4.3 - Level 1 DFD&quot;. Professional UML/DFD notation.
+</code></pre>
+<hr>
+<h2>PROMPT 4: ER Diagram (Database)</h2>
+<pre><code>Create an Entity Relationship Diagram for Online Job Portal MongoDB database.
+
+Entities and attributes:
+
+USER (_id PK, fullname, email, phoneNumber, password, pancard, adharcard, role [Student|Recruiter], profile{bio, skills, resume, profilePhoto}, timestamps)
+
+COMPANY (_id PK, name, description, website, location, logo, userId FK → User, timestamps)
+
+JOB (_id PK, title, description, requirements[], salary, experienceLevel, location, jobType, position, company FK → Company, created_by FK → User, applications[], timestamps)
+
+APPLICATION (_id PK, job FK → Job, applicant FK → User, status [pending|accepted|rejected], timestamps)
+
+Relationships:
+- User (Recruiter) 1 —— creates —— 1 Company
+- Company 1 —— has —— many Jobs
+- User (Recruiter) 1 —— posts —— many Jobs
+- Job 1 —— receives —— many Applications
+- User (Student) 1 —— submits —— many Applications
+
+Use crow&#39;s foot notation. Title: &quot;Fig 4.4 - ER Diagram&quot;. Clean academic diagram.
+</code></pre>
+<hr>
+<h2>PROMPT 5: Use Case Diagram</h2>
+<pre><code>Draw a UML Use Case Diagram for Online Job Portal.
+
+Actors:
+- Student (left side)
+- Recruiter (right side)
+
+Student use cases (ovals):
+Register, Login, Logout, Browse Jobs, Search/Filter Jobs, View Job Details, Apply for Job, View Applied Jobs, Update Profile, Upload Resume
+
+Recruiter use cases:
+Register, Login, Logout, Create Company, Update Company, Post Job, View Posted Jobs, View Applicants, Update Application Status (Accept/Reject)
+
+Include &lt;&lt;include&gt;&gt; Login before protected use cases.
+System boundary rectangle labeled &quot;Online Job Portal&quot;.
+
+Title: &quot;Fig 4.5 - Use Case Diagram&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 6: Sequence Diagram — User Login</h2>
+<pre><code>Create a UML Sequence Diagram: &quot;User Login Flow - Online Job Portal&quot;
+
+Participants (left to right):
+Student Browser (React), Express API, Auth Controller, MongoDB, JWT Service
+
+Flow:
+1. Student enters email/password on Login page
+2. Browser POST /api/user/login
+3. API finds user in MongoDB
+4. bcrypt compares password
+5. JWT generated with userId
+6. HTTP-only cookie &quot;token&quot; set in response
+7. User data returned to React
+8. Redux auth state updated
+9. Redirect: Recruiter → /admin/companies, Student → Home
+
+Show alt fragment for invalid credentials (401 error).
+Title: &quot;Fig 4.6 - Sequence Diagram: Login&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 7: Sequence Diagram — Apply for Job</h2>
+<pre><code>Create a UML Sequence Diagram: &quot;Apply for Job - Online Job Portal&quot;
+
+Participants:
+Student (React), Express API, Auth Middleware, Application Controller, MongoDB
+
+Flow:
+1. Student clicks Apply on Job Description page
+2. GET /api/application/apply/:jobId with JWT cookie
+3. Middleware verifies token
+4. Check if already applied
+5. Create Application document (status: pending)
+6. Link application to Job
+7. Success response + toast notification
+8. Update Redux applied jobs list
+
+Include alt: not logged in → redirect to /login
+Title: &quot;Fig 4.7 - Sequence Diagram: Apply Job&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 8: Sequence Diagram — Recruiter Post Job</h2>
+<pre><code>Create a UML Sequence Diagram: &quot;Recruiter Post Job - Online Job Portal&quot;
+
+Participants:
+Recruiter (React Admin), Express API, Auth Middleware, Job Controller, MongoDB
+
+Flow:
+1. Recruiter fills Post Job form (title, description, salary, company, etc.)
+2. POST /api/job/post with JWT
+3. Verify Recruiter role
+4. Validate company exists
+5. Save Job to MongoDB linked to company and created_by
+6. Return success
+7. Redirect to /admin/jobs
+
+Title: &quot;Fig 4.8 - Sequence Diagram: Post Job&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 9: Activity Diagram — Job Application Flow</h2>
+<pre><code>Draw a UML Activity Diagram for complete job application workflow in Online Job Portal.
+
+Start → Open Website → Browse Jobs → Select Job → View Details
+
+Decision: Logged in?
+- No → Login/Register → (back to View Details)
+- Yes → Decision: Already applied?
+  - Yes → Show &quot;Already Applied&quot; message → End
+  - No → Apply for Job → Create Application (pending) → Show Success
+
+Parallel path for Recruiter:
+Recruiter Login → Admin Dashboard → View Applicants → Decision: Accept or Reject → Update Status in DB → Notify (future)
+
+Use swimlanes: Student | System | Recruiter
+Title: &quot;Fig 4.9 - Activity Diagram: Job Application Flow&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 10: Component Diagram</h2>
+<pre><code>Create a UML Component Diagram for Online Job Portal MERN application.
+
+Frontend package (React):
+- App Router, Navbar, Home, Jobs, Browse, Description, Profile, Login, Register
+- Admin: Companies, PostJob, Applicants, ProtectedRoute
+- Redux Store (authSlice, jobSlice, companySlice, applicationSlice)
+- Hooks (useGetAllJobs, useGetAllAppliedJobs)
+- API Utils (Axios endpoints)
+
+Backend package (Node.js):
+- Express Server
+- Routes: user, company, job, application
+- Controllers, Models (Mongoose)
+- Middleware: isAuthenticated, Multer
+
+External: MongoDB, File System
+
+Show dependency arrows between components.
+Title: &quot;Fig 4.10 - Component Diagram&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 11: Deployment Diagram</h2>
+<pre><code>Create a UML Deployment Diagram for Online Job Portal development setup.
+
+Nodes:
+1. Client Device: Web Browser (Chrome)
+2. Developer Machine:
+   - React Dev Server (Vite, localhost:5173)
+   - Node.js Server (Express, localhost:5011)
+   - uploads/ folder (local disk)
+3. Cloud: MongoDB Atlas Cluster
+
+Artifacts:
+- frontend build / dev bundle
+- backend index.js
+- .env configuration
+
+Connections with protocols: HTTP, MongoDB connection string
+Title: &quot;Fig 4.11 - Deployment Diagram&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 12: Class Diagram (Optional)</h2>
+<pre><code>Create a UML Class Diagram for Online Job Portal backend models.
+
+Classes:
+User, Company, Job, Application
+
+Show main attributes and methods like save(), findOne(), findById().
+
+Relationships: associations, foreign keys (ObjectId references).
+
+Title: &quot;Class Diagram - Domain Models&quot;
+</code></pre>
+<hr>
+<h2>PROMPT 13: Block Diagram (Simple Overview for PPT)</h2>
+<pre><code>Create a simple colorful block diagram for college presentation titled &quot;Online Job Portal&quot;.
+
+4 blocks:
+1. Frontend - React + Tailwind (User Interface)
+2. Backend - Node.js + Express (Business Logic)
+3. Database - MongoDB (Data Storage)
+4. Security - JWT + bcrypt (Authentication)
+
+Center title: Online Job Portal | MERN Stack
+Bottom: Team names - Omkar Sankapal, Omkar Mohite, Rahul Dongare
+Guide: Nilesh Singh
+Use modern gradient colors, icons for each block.
+</code></pre>
+<hr>
+<h2>PROMPT 14: Network Diagram</h2>
+<pre><code>Draw a network diagram showing how Online Job Portal works over network.
+
+Devices: User PC → Localhost Frontend (5173) → Localhost Backend (5011) → Internet → MongoDB Atlas Cloud
+
+Label ports, protocols (HTTP, TCP), firewall note for MongoDB IP whitelist.
+Title: &quot;Network Architecture - Job Portal&quot;
+</code></pre>
+<hr>
+<h2>TIPS FOR GEMINI</h2>
+<ol>
+<li>Add at the end: <strong>&quot;Output as high-resolution diagram image&quot;</strong> or <strong>&quot;Give PlantUML code I can render&quot;</strong></li>
+<li>If diagram is wrong, reply: <strong>&quot;Make it simpler with fewer arrows, larger labels, black and white for printing&quot;</strong></li>
+<li>For Mermaid in GitHub/README, ask: <strong>&quot;Convert this to Mermaid syntax&quot;</strong></li>
+<li>Paste one prompt at a time for best results</li>
+</ol>
+<hr>
+<h2>QUICK MERMAIL (Bonus — paste in Mermaid Live Editor)</h2>
+<h3>Architecture (Mermaid)</h3>
+<pre><code class="language-mermaid">flowchart LR
+    A[Browser\nReact + Redux] --&gt;|REST JSON + JWT Cookie| B[Express API\nPort 5011]
+    B --&gt; C[(MongoDB Atlas)]
+    B --&gt; D[Local Uploads\nprofiles/resumes/logos]
+</code></pre>
+<h3>ER (Mermaid)</h3>
+<pre><code class="language-mermaid">erDiagram
+    USER ||--o| COMPANY : owns
+    COMPANY ||--|{ JOB : posts
+    USER ||--|{ JOB : creates
+    JOB ||--|{ APPLICATION : has
+    USER ||--|{ APPLICATION : submits
+</code></pre>
+<hr>
+<p><em>Use with <code>01_PROJECT_REPORT.md</code> for complete project documentation.</em></p>
+
+</body>
+</html>

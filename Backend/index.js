@@ -20,8 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+const localOrigins = ["http://localhost:5173", "http://localhost:5174"];
+const deployedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(",").map((o) => o.trim()).filter(Boolean)
+  : [];
+
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174"],
+  origin: [...localOrigins, ...deployedOrigins],
   credentials: true,
 };
 
