@@ -52,7 +52,7 @@ const Jobs = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.4 }}
-                    key={job.id}
+                    key={job._id}
                   >
                     <Job1 job={job} />
                   </motion.div>

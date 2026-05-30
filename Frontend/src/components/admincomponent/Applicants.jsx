@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAllApplicants } from "@/redux/applicationSlice";
 import { APPLICATION_API_ENDPOINT } from "@/utils/data";
 import Navbar from "../components_lite/Navbar";
+import { Link } from "react-router-dom";
 
 const Applicants = () => {
   const params = useParams();
@@ -31,9 +32,17 @@ const Applicants = () => {
     <div>
       <Navbar />
       <div className="max-w-7xl mx-auto">
-        <h1 className="font-bold text-xl my-5">
-          Applicants {applicants?.applications?.length}
-        </h1>
+        <div className="flex flex-wrap items-center justify-between gap-3 my-5">
+          <h1 className="font-bold text-xl">
+            Applicants {applicants?.applications?.length}
+          </h1>
+          <Link
+            to={`/admin/jobs/${params.id}/ats`}
+            className="px-4 py-2 bg-[#6B3AC2] text-white rounded-md text-sm font-medium hover:bg-[#552d9b]"
+          >
+            ATS Ranking Dashboard →
+          </Link>
+        </div>
         <ApplicantsTable />
       </div>
     </div>

@@ -6,38 +6,41 @@ import { useDispatch, useSelector } from "react-redux";
 
 const useGetAllJobs = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { searchedQuery } = useSelector((store) => store.job);
+  const { searchedQuery, allJobs } = useSelector((store) => store.job);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchAllJobs = async () => {
-      setLoading(true);
       setError(null);
+      if (allJobs.length === 0) setLoading(true);
+
       try {
         const res = await axios.get(
-          `${JOB_API_ENDPOINT}/get?keyword=${searchedQuery}`,
+          `${JOB_API_ENDPOINT}/get?keyword=${encodeURIComponent(searchedQuery || "")}`,
           {
             withCredentials: true,
+            signal: controller.signal,
           }
         );
-        console.log("API Response:", res.data);
         if (res.data.status) {
-          // Updated success check
           dispatch(setAllJobs(res.data.jobs));
         } else {
           setError("Failed to fetch jobs.");
         }
-      } catch (error) {
-        console.error("Fetch Error:", error);
-        setError(error.message || "An error occurred.");
+      } catch (err) {
+        if (axios.isCancel(err) || err.code === "ERR_CANCELED") return;
+        setError(err.message || "An error occurred.");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     };
 
     fetchAllJobs();
-  }, [dispatch]);
+    return () => controller.abort();
+  }, [dispatch, searchedQuery]);
 
   return { loading, error };
 };

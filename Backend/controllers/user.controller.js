@@ -2,6 +2,33 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { getPublicUploadUrl } from "../utils/fileUrl.js";
+import { parseResumeForUser } from "../services/ats/resumeParser.service.js";
+
+function sanitizeUser(user) {
+  return {
+    _id: user._id,
+    fullname: user.fullname,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    adharcard: user.adharcard,
+    pancard: user.pancard,
+    role: user.role,
+    profile: user.profile,
+  };
+}
+
+export const getCurrentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+    return res.status(200).json({ success: true, user: sanitizeUser(user) });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", success: false });
+  }
+};
 
 export const register = async (req, res) => {
   try {
@@ -134,16 +161,7 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    const sanitizedUser = {
-      _id: user._id,
-      fullname: user.fullname,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      adharcard: user.adharcard,
-      pancard: user.pancard,
-      role: user.role,
-      profile: user.profile,
-    };
+    const sanitizedUser = sanitizeUser(user);
 
     const isCrossOrigin =
       process.env.FRONTEND_URL &&
@@ -161,6 +179,7 @@ export const login = async (req, res) => {
         message: `Welcome back ${user.fullname}`,
         user: sanitizedUser,
         success: true,
+        ...(user.role === "Admin" ? { token } : {}),
       });
   } catch (error) {
     console.error(error);
@@ -214,18 +233,15 @@ export const updateProfile = async (req, res) => {
 
     await user.save();
 
-    const updatedUser = {
-      _id: user._id,
-      fullname: user.fullname,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      role: user.role,
-      profile: user.profile,
-    };
+    if (file) {
+      parseResumeForUser(userId).catch((err) =>
+        console.error("[ATS] resume parse after profile update:", err.message)
+      );
+    }
 
     return res.status(200).json({
       message: "Profile updated successfully",
-      user: updatedUser,
+      user: sanitizeUser(user),
       success: true,
     });
   } catch (error) {

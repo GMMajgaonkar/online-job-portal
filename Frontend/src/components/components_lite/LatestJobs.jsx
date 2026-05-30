@@ -3,7 +3,7 @@ import JobCards from "./JobCards";
 import { useSelector } from "react-redux";
 
 const LatestJobs = () => {
-  const allJobs = useSelector((state) => state.jobs?.allJobs || []); // Safely access allJobs
+  const allJobs = useSelector((state) => state.job?.allJobs || []);
 
   return (
     <div className="max-w-7xl mx-auto my-20">
@@ -20,10 +20,8 @@ const LatestJobs = () => {
             .slice(0, 6)
             .map((job) =>
               job?._id ? (
-                <JobCards key={job._id} job={job}></JobCards>
-              ) : (
-                <span key={Math.random()}>Invalid Job Data</span>
-              )
+                <JobCards key={job._id} job={job} />
+              ) : null
             )
         )}
       </div>

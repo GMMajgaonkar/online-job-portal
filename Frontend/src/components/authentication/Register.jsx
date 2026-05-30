@@ -70,10 +70,13 @@ const Register = () => {
 
   const { user } = useSelector((store) => store.auth);
   useEffect(() => {
-    if (user) {
-      navigate("/");
+    if (!user) return;
+    if (user.role === "Recruiter") {
+      navigate("/admin/companies", { replace: true });
+    } else {
+      navigate("/", { replace: true });
     }
-  }, []);
+  }, [user, navigate]);
   return (
     <div>
       <Navbar></Navbar>

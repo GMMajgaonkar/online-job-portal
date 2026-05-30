@@ -1,35 +1,42 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Header from "./Header";
 import Categories from "./Categories";
 import LatestJobs from "./LatestJobs";
 import Footer from "./Footer";
 import useGetAllJobs from "@/hooks/useGetAllJobs";
-import { useNavigate } from "react-router-dom";
+import { getPlatformAdminToken } from "@/utils/platformAdminClient";
 
 const Home = () => {
-  const { loading, error } = useGetAllJobs(); // Trigger data fetch
-  const jobs = useSelector((state) => state.jobs.allJobs); // Access Redux state
-
-  console.log("Jobs in Component:", { loading, error, jobs }); // Log to check state
+  const { loading, error } = useGetAllJobs();
+  const jobs = useSelector((state) => state.job.allJobs);
   const { user } = useSelector((store) => store.auth);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user?.role === "Recruiter") {
-      navigate("/admin/companies");
+  if (user?.role === "Admin") {
+    if (getPlatformAdminToken()) {
+      return <Navigate to="/platform-admin/dashboard" replace />;
     }
-  }, []);
+    return <Navigate to="/login" replace />;
+  }
+  if (user?.role === "Recruiter") {
+    return <Navigate to="/admin/companies" replace />;
+  }
 
   return (
     <div>
       <Navbar />
       <Header />
       <Categories />
-      {loading && <p>Loading jobs...</p>}
-      {error && <p>Error: {error}</p>}
-      {!loading && !error && <LatestJobs jobs={jobs} />}
+      {error && (
+        <p className="text-center text-red-600 py-2">Error: {error}</p>
+      )}
+      {loading && jobs.length === 0 ? (
+        <p className="text-center text-gray-600 py-8">Loading jobs...</p>
+      ) : (
+        <LatestJobs />
+      )}
       <Footer />
     </div>
   );

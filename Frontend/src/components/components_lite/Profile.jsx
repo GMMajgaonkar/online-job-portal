@@ -1,20 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Contact, Mail, Pen } from "lucide-react";
 import { Badge } from "../ui/badge";
 import AppliedJob from "./AppliedJob";
+import SavedJobs from "./SavedJobs";
 import EditProfileModal from "./EditProfileModal";
 import { useSelector } from "react-redux";
 import useGetAppliedJobs from "@/hooks/useGetAllAppliedJobs";
-
- 
+import useGetCurrentUser from "@/hooks/useGetCurrentUser";
 const isResume = true;
 const Profile = () => {
+  const { loading: userLoading } = useGetCurrentUser({ required: true });
   useGetAppliedJobs();
   const [open, setOpen] = useState(false);
   const { user } = useSelector((store) => store.auth);
+
+  useEffect(() => {
+    if (window.location.hash === "#applied-jobs") {
+      const el = document.getElementById("applied-jobs");
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [userLoading, user]);
+
+  if (userLoading) {
+    return (
+      <div>
+        <Navbar />
+        <p className="text-center text-gray-500 py-16">Loading your profile…</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Navbar />
@@ -60,8 +78,8 @@ const Profile = () => {
           <div className="my-5">
             <h1>Skills</h1>
             <div className="flex items-center gap-1">
-              {user?.profile?.skills.length !== 0 ? (
-                user?.profile?.skills.map((item, index) => (
+              {(user?.profile?.skills?.length ?? 0) > 0 ? (
+                user.profile.skills.map((item, index) => (
                   <Badge key={index}>{item}</Badge>
                 ))
               ) : (
@@ -91,10 +109,16 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl">
-        <h1 className="text-lg my-5 font-bold">Applied Jobs</h1>
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 shadow border my-5">
+        <h1 className="text-lg font-bold mb-4">Saved For Later</h1>
+        <SavedJobs />
+      </div>
 
-        {/* Add Application Table */}
+      <div
+        id="applied-jobs"
+        className="max-w-4xl mx-auto bg-white rounded-2xl p-6 shadow border my-5 scroll-mt-24"
+      >
+        <h1 className="text-lg font-bold mb-4">Applied Jobs</h1>
         <AppliedJob />
       </div>
 

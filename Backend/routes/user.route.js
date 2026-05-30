@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getCurrentUser,
   login,
   logout,
   register,
@@ -16,6 +17,7 @@ const router = express.Router();
 router.route("/register").post(singleUploadProfile, register);
 router.route("/login").post(login);
 router.route("/logout").post(logout);
+router.route("/me").get(authenticateToken, getCurrentUser);
 router
   .route("/profile/update")
   .post(authenticateToken, singleUploadResume, updateProfile);

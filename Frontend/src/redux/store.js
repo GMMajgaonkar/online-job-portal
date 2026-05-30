@@ -1,11 +1,8 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
-import jobSlice from "./jobSlice";
 import jobReducer from "./jobSlice";
-import { createRoot } from "react-dom/client";
-import { companySlice } from "./companyslice";
 import companyReducer from "./companyslice";
-
+import applicationReducer from "./applicationSlice";
 import {
   persistStore,
   persistReducer,
@@ -18,7 +15,6 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import applicationSlice from "./applicationSlice";
 
 /** Avoid stale empty persisted lists; always refetch applied jobs / job detail from API */
 const jobVolatileTransform = createTransform(
@@ -30,23 +26,21 @@ const jobVolatileTransform = createTransform(
     outboundState
       ? { ...outboundState, allAppliedJobs: [], singleJob: null }
       : outboundState,
-  { whitelist: ["job", "jobs"] }
+  { whitelist: ["job"] }
 );
 
 const persistConfig = {
   key: "root",
-  version: 1,
+  version: 2,
   storage,
   transforms: [jobVolatileTransform],
 };
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  job: jobSlice,
-  jobs: jobReducer,
-  company: companySlice,
+  job: jobReducer,
   company: companyReducer,
-  application: applicationSlice,
+  application: applicationReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

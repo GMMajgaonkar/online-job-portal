@@ -7,6 +7,8 @@ import userRoute from "./routes/user.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
+import platformAdminRoute from "./routes/platformAdmin.route.js";
+import atsRoute from "./routes/ats.route.js";
 import { ensureUploadDirs, UPLOAD_ROOT } from "./middleware/multer.js";
 
 dotenv.config({});
@@ -41,6 +43,8 @@ app.use("/api/user", userRoute);
 app.use("/api/company", companyRoute);
 app.use("/api/job", jobRoute);
 app.use("/api/application", applicationRoute);
+app.use("/api/platform-admin", platformAdminRoute);
+app.use("/api/ats", atsRoute);
 
 app.listen(PORT, () => {
   connectDB();

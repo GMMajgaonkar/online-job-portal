@@ -85,6 +85,10 @@ const AdminJobsTable = () => {
                         <Eye className="w-4"></Eye>
                         <span>Applicants</span>
                       </div>
+                      <div onClick={() => navigate(`/admin/jobs/${job._id}/ats`)} className="flex items-center gap-2 w-fit cursor-pointer mt-1 text-[#6B3AC2]">
+                        <Eye className="w-4"></Eye>
+                        <span>ATS Ranking</span>
+                      </div>
                     </PopoverContent>
                   </Popover>
                 </TableCell>

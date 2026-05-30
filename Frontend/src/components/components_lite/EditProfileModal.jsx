@@ -59,8 +59,7 @@ const EditProfileModal = ({ open, setOpen }) => {
         }
       );
       if (res.data.success) {
-        // dispatch(setUser(res.data.user));
-        dispatch(setUser({ ...res.data.user, skills: input.skills }));
+        dispatch(setUser(res.data.user));
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -98,9 +97,9 @@ const EditProfileModal = ({ open, setOpen }) => {
                 </Label>
                 <input
                   type="text"
-                  id="name"
+                  id="fullname"
                   value={input.fullname}
-                  name="name"
+                  name="fullname"
                   onChange={changeEventHandler}
                   className="col-span-3 border border-gray-300 rounded-md p-2"
                 />

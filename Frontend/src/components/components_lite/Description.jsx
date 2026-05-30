@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
 import { useParams } from "react-router-dom";
 import { JOB_API_ENDPOINT, APPLICATION_API_ENDPOINT } from "@/utils/data";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setSingleJob } from "@/redux/jobSlice";
+import { setSingleJob, removeAppliedJob } from "@/redux/jobSlice";
 import { toast } from "sonner";
+import useSaveJob from "@/hooks/useSaveJob";
+import { Bookmark, BookMarked } from "lucide-react";
+import ResumeAnalyzer from "../ats/ResumeAnalyzer";
 
 function userHasApplied(applications, userId) {
   if (!applications?.length || !userId) return false;
@@ -19,6 +30,20 @@ function userHasApplied(applications, userId) {
   });
 }
 
+/** Returns the application entry (with _id) for the current user, or null */
+function findMyApplication(applications, userId) {
+  if (!applications?.length || !userId) return null;
+  const uid = String(userId);
+  return (
+    applications.find((entry) => {
+      const aid = entry?.applicant;
+      if (aid == null) return false;
+      if (typeof aid === "object" && aid._id != null) return String(aid._id) === uid;
+      return String(aid) === uid;
+    }) ?? null
+  );
+}
+
 const Description = () => {
   const params = useParams();
   const jobId = params.id;
@@ -27,11 +52,18 @@ const Description = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
   const { user } = useSelector((store) => store.auth);
 
   const [isApplied, setIsApplied] = useState(() =>
     userHasApplied(singleJob?.applications, user?._id)
   );
+  const { isSaved, toggleSave } = useSaveJob(singleJob);
+
+  // Derive my applicationId from the applications list
+  const myApplication = findMyApplication(singleJob?.applications, user?._id);
+  const myApplicationId = myApplication?._id;
 
   const applyJobHandler = async () => {
     try {
@@ -49,12 +81,46 @@ const Description = () => {
           applications: [...(singleJob.applications || []), newEntry],
         };
         dispatch(setSingleJob(updateSingleJob));
-        console.log(res.data);
-        toast.success(res.data.message);
+        const atsMsg = res.data.ats?.overallScore
+          ? ` · ATS match: ${res.data.ats.overallScore}%`
+          : "";
+        toast.success(res.data.message + atsMsg);
       }
     } catch (error) {
-      console.log(error.message);
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Failed to apply");
+    }
+  };
+
+  const cancelApplicationHandler = async () => {
+    if (!myApplicationId) {
+      toast.error("Could not find your application. Please refresh and try again.");
+      setShowCancelDialog(false);
+      return;
+    }
+    setCancelling(true);
+    setShowCancelDialog(false);
+    try {
+      const res = await axios.delete(
+        `${APPLICATION_API_ENDPOINT}/cancel/${myApplicationId}`,
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        // Remove application from singleJob in Redux
+        const updatedApplications = (singleJob.applications || []).filter(
+          (entry) => String(entry._id) !== String(myApplicationId)
+        );
+        dispatch(setSingleJob({ ...singleJob, applications: updatedApplications }));
+        setIsApplied(false);
+        // Also purge from allAppliedJobs list
+        dispatch(removeAppliedJob(myApplicationId));
+        toast.success("Application cancelled. You can re-apply anytime.");
+      }
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Failed to cancel application"
+      );
+    } finally {
+      setCancelling(false);
     }
   };
 
@@ -66,7 +132,6 @@ const Description = () => {
         const res = await axios.get(`${JOB_API_ENDPOINT}/get/${jobId}`, {
           withCredentials: true,
         });
-        console.log("API Response:", res.data);
         if (res.data.status) {
           dispatch(setSingleJob(res.data.job));
           setIsApplied(
@@ -90,14 +155,42 @@ const Description = () => {
     setIsApplied(userHasApplied(singleJob?.applications, user?._id));
   }, [singleJob?._id, singleJob?.applications, user?._id]);
 
-  console.log("single jobs", singleJob);
-
   if (!singleJob) {
     return <div>Loading...</div>;
   }
 
   return (
     <div>
+      {/* Cancel confirmation dialog */}
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Withdraw Application?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to cancel your application for{" "}
+              <span className="font-semibold text-foreground">
+                {singleJob?.title}
+              </span>
+              ? The job will become available for you to re-apply later.
+              <span className="block text-amber-600 text-xs mt-2">
+                Note: Only pending applications can be cancelled.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
+              Keep Application
+            </Button>
+            <Button
+              className="bg-red-500 hover:bg-red-600"
+              onClick={cancelApplicationHandler}
+            >
+              Yes, Withdraw
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <div className="max-w-7xl mx-auto my-10 ">
         <div className="flex items-center justify-between">
           <div>
@@ -117,20 +210,46 @@ const Description = () => {
               </Badge>
             </div>
           </div>
-          <div>
+
+          <div className="flex items-center gap-2">
             <Button
-              onClick={isApplied ? null : applyJobHandler}
-              disabled={isApplied}
-              className={`rounded-lg ${
-                isApplied
-                  ? "bg-gray-600 cursor-not-allowed"
-                  : "bg-[#6B3AC2] hover:bg-[#552d9b]"
-              }`}
+              type="button"
+              variant="outline"
+              size="icon"
+              className={`rounded-full ${isSaved ? "border-[#6B3AC2] text-[#6B3AC2]" : ""}`}
+              onClick={toggleSave}
+              aria-label="Save for later"
             >
-              {isApplied ? "Already Applied" : "Apply"}
+              {isSaved ? (
+                <BookMarked className="fill-[#6B3AC2] text-[#6B3AC2]" />
+              ) : (
+                <Bookmark />
+              )}
             </Button>
+
+            {isApplied ? (
+              <Button
+                onClick={() => setShowCancelDialog(true)}
+                disabled={cancelling}
+                className="rounded-lg bg-red-500 hover:bg-red-600"
+              >
+                {cancelling ? "Cancelling…" : "Cancel Application"}
+              </Button>
+            ) : (
+              <Button
+                onClick={applyJobHandler}
+                className="rounded-lg bg-[#6B3AC2] hover:bg-[#552d9b]"
+              >
+                Apply Now
+              </Button>
+            )}
           </div>
         </div>
+
+        {user?.role === "Student" && (
+          <ResumeAnalyzer jobId={jobId} disabled={isApplied} />
+        )}
+
         <h1 className="border-b-2 border-b-gray-400 font-medium py-4">
           {singleJob?.description}
         </h1>

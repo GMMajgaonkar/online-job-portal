@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components_lite/Navbar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { RadioGroup } from "../ui/radio-group";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import { USER_API_ENDPOINT } from "@/utils/data.js";
+import {
+  getPlatformAdminToken,
+  setPlatformAdminToken,
+} from "@/utils/platformAdminClient";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "@/redux/authSlice";
 
@@ -18,8 +22,21 @@ const Login = () => {
     role: "",
   });
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "";
   const dispatch = useDispatch();
   const { loading, user } = useSelector((store) => store.auth);
+
+  const safeRedirect = (role) => {
+    if (redirectTo && redirectTo.startsWith("/") && !redirectTo.startsWith("//")) {
+      if (role === "Student" || redirectTo.startsWith("/Profile")) {
+        return redirectTo;
+      }
+    }
+    if (role === "Admin") return "/platform-admin/dashboard";
+    if (role === "Recruiter") return "/admin/companies";
+    return "/";
+  };
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
@@ -29,30 +46,47 @@ const Login = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    if (!input.role) {
+      toast.error("Please select a role (Student, Recruiter, or Admin)");
+      return;
+    }
 
     try {
-      dispatch(setLoading(true)); // Start loading
+      dispatch(setLoading(true));
+      const isAdminLogin = input.role === "Admin";
       const res = await axios.post(`${USER_API_ENDPOINT}/login`, input, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
       if (res.data.success) {
+        if (isAdminLogin && res.data.token) {
+          setPlatformAdminToken(res.data.token);
+        }
         dispatch(setUser(res.data.user));
-        navigate("/");
+        const role = res.data.user?.role;
+        navigate(safeRedirect(role));
         toast.success(res.data.message);
       }
     } catch (error) {
-      toast.error("Login failed");
+      toast.error(
+        error.response?.data?.message || "Login failed"
+      );
     } finally {
       dispatch(setLoading(false)); // End loading
     }
   };
 
   useEffect(() => {
-    if (user) {
-      navigate("/");
+    if (!user) return;
+    if (user.role === "Admin" && getPlatformAdminToken()) {
+      navigate(safeRedirect("Admin"), { replace: true });
+    } else if (user.role === "Recruiter") {
+      navigate(safeRedirect("Recruiter"), { replace: true });
+    } else if (user.role === "Student") {
+      navigate(safeRedirect("Student"), { replace: true });
     }
-  }, []);
+  }, [user, navigate, redirectTo]);
 
   return (
     <div>
@@ -110,6 +144,17 @@ const Login = () => {
                   className="cursor-pointer"
                 />
                 <Label htmlFor="r2">Recruiter</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Input
+                  type="radio"
+                  name="role"
+                  value="Admin"
+                  checked={input.role === "Admin"}
+                  onChange={changeEventHandler}
+                  className="cursor-pointer"
+                />
+                <Label htmlFor="r3">Admin</Label>
               </div>
             </RadioGroup>
           </div>

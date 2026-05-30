@@ -18,3 +18,5 @@ export const USER_API_ENDPOINT = `${API_BASE}/api/user`;
 export const JOB_API_ENDPOINT = `${API_BASE}/api/job`;
 export const APPLICATION_API_ENDPOINT = `${API_BASE}/api/application`;
 export const COMPANY_API_ENDPOINT = `${API_BASE}/api/company`;
+export const PLATFORM_ADMIN_API_ENDPOINT = `${API_BASE}/api/platform-admin`;
+export const ATS_API_ENDPOINT = `${API_BASE}/api/ats`;

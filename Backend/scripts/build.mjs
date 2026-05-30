@@ -11,6 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
 
 const SOURCE_DIRS = ['controllers', 'middleware', 'models', 'routes', 'utils'];
+const SCRIPT_SYNTAX_ONLY = ['scripts/seedAdmin.js', 'scripts/build.mjs'];
 const ENTRY_FILE = path.join(root, 'index.js');
 
 function collectJsFiles(dir) {
@@ -37,6 +38,9 @@ async function main() {
   for (const dir of SOURCE_DIRS) {
     files.push(...collectJsFiles(path.join(root, dir)));
   }
+  for (const rel of SCRIPT_SYNTAX_ONLY) {
+    files.push(path.join(root, rel));
+  }
 
   console.log(`\nBackend build: checking ${files.length} files...\n`);
 
@@ -57,7 +61,9 @@ async function main() {
 
   // 2) Import resolution (skip index.js — it starts the server)
   console.log('\nStep 2/2: Module import check');
-  const importFiles = files.filter((f) => f !== ENTRY_FILE);
+  const importFiles = files.filter(
+    (f) => f !== ENTRY_FILE && !f.includes(`${path.sep}scripts${path.sep}`)
+  );
   for (const file of importFiles) {
     const rel = path.relative(root, file);
     try {
